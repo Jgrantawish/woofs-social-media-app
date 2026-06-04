@@ -1,0 +1,50 @@
+@startuml
+hide circle
+
+class User {
+    **id : int <<PK>>**
+    --
+    username : str
+    email : str
+    password_hash : str
+    created_date : date 
+    profile_pic_url : str
+    location_id : int  
+}
+
+
+class Location {
+    **id : int <<PK>>**
+    --
+    city : str
+    area : str
+    country : str
+}
+
+class Pet {
+    **id : int <<PK>>**
+    --
+    owner_id : int
+    name : str 
+    birthday : date
+    breed : str
+}
+
+class Post {
+    **id : int <<PK>>**
+    --
+    user_id : int
+    picture_url : str
+    content : str
+    likes : int ???? or different table containing the user_id that liked???
+}
+
+class Comment {
+    **id : int <<PK>>**
+    --
+    post_id : int 
+    user_id : int
+    content : str
+}
+
+@enduml
