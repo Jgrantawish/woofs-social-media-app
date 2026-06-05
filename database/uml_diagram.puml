@@ -7,9 +7,9 @@ class User {
     username : str
     email : str
     password_hash : str
-    created_date : date 
+    created_date : datetime 
     profile_pic_url : str
-    location_id : int  
+    location_id : int <<FK>>
 }
 
 
@@ -24,27 +24,39 @@ class Location {
 class Pet {
     **id : int <<PK>>**
     --
-    owner_id : int
+    owner_id : int <<FK>>
     name : str 
-    birthday : date
+    birthday : datetime
     breed : str
 }
 
 class Post {
     **id : int <<PK>>**
     --
-    user_id : int
+    user_id : int <<FK>>
     picture_url : str
     content : str
-    likes : int ???? or different table containing the user_id that liked???
+    created_date : datetime 
+    last_updated : datetime
+}
+
+class Likes {
+    **user_id : int <<PK, FK>>**
+    **post_id : int <<PK, FK>>**
 }
 
 class Comment {
     **id : int <<PK>>**
     --
-    post_id : int 
-    user_id : int
+    post_id : int <<FK>>
+    user_id : int <<FK>>
     content : str
+    created_date : datetime 
+    last_updated : datetime
 }
+
+User "1" -- "1" Location
+
+User "1" -- "1" Pet
 
 @enduml
