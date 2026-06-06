@@ -48,8 +48,8 @@ class Like {
 class Comment {
     **id : int <<PK>>**
     --
-    post_id : int <<FK>>
     user_id : int <<FK>>
+    post_id : int <<FK>>
     content : str
     created_date : datetime 
     last_updated : datetime
