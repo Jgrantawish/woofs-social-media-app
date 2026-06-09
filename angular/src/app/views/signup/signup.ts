@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -8,12 +9,17 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './signup.css',
 })
 export class Signup {
+  constructor(private authService:AuthService) {}
+
   public username: string = '';
   public email: string = '';
   public password: string = '';
 
   public signUp() {
-    console.log(this.email);
-    console.log(this.password);
+    this.authService.signUp(this.username, this.email,this.password).subscribe({
+      next: () => {
+        console.log('User created');
+      }
+    });
   }
 }
