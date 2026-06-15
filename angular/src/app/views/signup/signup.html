@@ -15,6 +15,7 @@
             type="text"
             placeholder="Username"
             [(ngModel)]="username"
+            (blur)="validateUsername()"
             (ngModelChange)="validateUsername()"
             #usernameCtrl="ngModel"
             />
@@ -28,6 +29,7 @@
             type="email"
             placeholder="Email"
             [(ngModel)]="email"
+            (blur)="validateEmail()"
             (ngModelChange)="validateEmail()"
             #emailCtrl="ngModel"
             />
@@ -41,23 +43,24 @@
             type="password"
             placeholder="Password"
             [(ngModel)]="password"
+            (blur)="validatePassword()"
             (ngModelChange)="validatePassword()"
             #passwordCtrl="ngModel"
             />
 
             @if (usernameErrorMessage){
-                <div class="mt-2 rounded bg-red/50 p-2 text-red-700">
+                <div class="p-2 text-red-700">
                     {{usernameErrorMessage}} 
                 </div>
             }
             @if (emailErrorMessage){
-                <div class="mt-2 rounded bg-red/50 p-2 text-red-700">
+                <div class="p-2 text-red-700">
                     {{emailErrorMessage}}
                 </div>
             }
 
             @if (passwordErrors.length > 0){
-                <div class="mt-2 rounded bg-red/50 p-2 text-red-700">
+                <div class="p-2 text-red-700">
                     Your password must:
 
                     <ul>
@@ -70,7 +73,7 @@
 
             <button class="mt-4 p-2 rounded-lg bg-background text-white"
             [disabled]="usernameErrorMessage || emailErrorMessage || passwordErrors.length > 0"
-            (click)="submit()">
+            (click)="signUp()">
             Sign Up 
             </button>
         

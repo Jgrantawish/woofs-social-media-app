@@ -87,7 +87,7 @@ public validateUsername() {
   }
 
   
-  private signUp(){
+  public signUp(){
     this.authService.signUp(this.username, this.email, this.password).subscribe({
       next: () => {
         console.log('User created');
