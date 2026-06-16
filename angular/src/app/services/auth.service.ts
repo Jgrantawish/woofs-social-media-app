@@ -16,8 +16,23 @@ export class AuthService {
         username: username,
         email: email,
         password :password
+      });
+    }
+
+    public checkUsernameAvailable(username: string) {
+      return this.http.get<{available: boolean}>(this.apiUrl + '/auth/users/check-username', {
+        params: {
+          username
         }
-      )
+      });
+    }
+
+    public checkEmailAvailable(email: string) {
+      return this.http.get<{available: boolean}>(this.apiUrl + '/auth/users/check-email', {
+        params: {
+          email
+        }
+      });
     }
 }
 

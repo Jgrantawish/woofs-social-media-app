@@ -8,8 +8,8 @@
 
             <input class="mb-4 px-4 py-2 bg-white rounded-lg border-2 focus:outline-none"
             [ngClass]="{
-                'border-red-500': usernameCtrl.touched && usernameErrorMessage,
-                'border-success': usernameCtrl.touched && !usernameErrorMessage,
+                'border-red-500': usernameCtrl.touched && (usernameErrorMessage || usernameTaken),
+                'border-success': usernameCtrl.touched && !usernameErrorMessage && !usernameTaken,
                 'border-gray-300': !usernameCtrl.touched
             }"
             type="text"
@@ -22,8 +22,8 @@
 
             <input class="mb-4 px-4 py-2 bg-white rounded-lg border-2 focus:outline-none"
             [ngClass]="{
-                'border-red-500': emailCtrl.touched && emailErrorMessage,
-                'border-success': emailCtrl.touched && !emailErrorMessage,
+                'border-red-500': emailCtrl.touched && (emailErrorMessage || emailTaken),
+                'border-success': emailCtrl.touched && !emailErrorMessage && !emailTaken,
                 'border-gray-300': !emailCtrl.touched
             }"
             type="email"
@@ -53,9 +53,22 @@
                     {{usernameErrorMessage}} 
                 </div>
             }
+
+            @if (usernameTaken){
+                <div class="p-2 text-red-700">
+                    This username is already taken
+                </div>
+            }
+
             @if (emailErrorMessage){
                 <div class="p-2 text-red-700">
                     {{emailErrorMessage}}
+                </div>
+            }
+
+            @if (emailTaken){
+                <div class="p-2 text-red-700">
+                    This email address is already in use
                 </div>
             }
 
@@ -72,7 +85,7 @@
             }
 
             <button class="mt-4 p-2 rounded-lg bg-background text-white"
-            [disabled]="usernameErrorMessage || emailErrorMessage || passwordErrors.length > 0"
+            [disabled]="usernameErrorMessage || usernameTaken || emailErrorMessage || emailTaken || passwordErrors.length > 0"
             (click)="signUp()">
             Sign Up 
             </button>

@@ -11,8 +11,40 @@ def get_user_by_username(session: Session, username: str):
         select(User).where(User.username == username)
     ).first()
 
+def get_user_by_email(session: Session, email: str):
+    return session.exec(
+        select(User).where(User.email == email)
+    ).first()
 
 
+# GET endpoint for checking username availability
+# Used for frontend validation during signup
+@router.get("/users/check-username")
+def check_username(
+    username: str,
+    session: Session = Depends(get_session)
+):
+    user = get_user_by_username(session, username)
+    
+    return {
+        "available": user is None
+    }
+
+# GET endpoint for checking email availability
+# Used for frontend validation during signup
+@router.get("/users/check-email")
+def check_username(
+    email: str,
+    session: Session = Depends(get_session)
+):
+    user = get_user_by_email(session, email)
+    
+    return {
+        "available": user is None
+    }
+
+# POST endpoint for creating a new user
+# Used on the signup page to register a new account
 @router.post("/signup")
 def signup(
     username: str = Body(...),
