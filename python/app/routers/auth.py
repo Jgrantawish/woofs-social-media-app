@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlmodel import Session, select
 from ..database.database import get_session
 from ..models.models import User
+from ..core.security import hash_password
+import re
 
 router = APIRouter()
 router = APIRouter(prefix="/auth")
@@ -16,6 +18,47 @@ def get_user_by_email(session: Session, email: str):
         select(User).where(User.email == email)
     ).first()
 
+def validate_new_username(session: Session, username: str):
+    MIN_LENGTH = 3
+    MAX_LENGTH = 20
+    # Check username is of an appropriate length
+    if len(username) < MIN_LENGTH or len(username) > MAX_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid username" 
+        )
+
+    # Check username doesnt contain spaces
+    if any(char.isspace() for char in username):
+        raise HTTPException(
+            status_code=400,
+            detail="Username cannot contain spaces"
+        )
+
+    # Check username isn't already in use
+    if get_user_by_username(session,username):
+        raise HTTPException(
+            status_code=400,
+            detail="Username already taken"
+        )
+
+def validate_new_email(session: Session, email: str):
+    EMAIL_REGEX = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
+    # Check email matches the format of something@something.something with no spaces
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid email address"
+        )
+    
+    # Check email isn't already in use
+    if get_user_by_email(session,email):
+        raise HTTPException(
+            status_code=400,
+            detail="Email address already taken"
+        )
+    
 
 # GET endpoint for checking username availability
 # Used for frontend validation during signup
@@ -33,7 +76,7 @@ def check_username(
 # GET endpoint for checking email availability
 # Used for frontend validation during signup
 @router.get("/users/check-email")
-def check_username(
+def check_email(
     email: str,
     session: Session = Depends(get_session)
 ):
@@ -52,21 +95,14 @@ def signup(
     password: str = Body(...),
     session: Session = Depends(get_session)
 ):
-    existing_user = get_user_by_username(
-        session,
-        username
-    )
-
-    if existing_user:
-        raise HTTPException(
-            status_code=400,
-            detail="Username already taken"
-        )
+    validate_new_username(session, username)
+    validate_new_email(session, email)
+    hashed_password = hash_password(password)
 
     new_user = User(
         username=username,
         email=email,
-        password_hash=password  # hash later!
+        password_hash=hashed_password
     )
 
     session.add(new_user)
