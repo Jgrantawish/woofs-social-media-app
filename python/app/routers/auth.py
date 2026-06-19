@@ -65,9 +65,9 @@ def validate_new_email(db_session: Session, email: str):
 @router.get("/users/check-username")
 def check_username(
     username: str,
-    session: Session = Depends(get_session)
+    db_session: Session = Depends(get_db_session)
 ):
-    user = get_user_by_username(session, username)
+    user = get_user_by_username(db_session, username)
     
     return {
         "available": user is None
@@ -78,9 +78,9 @@ def check_username(
 @router.get("/users/check-email")
 def check_email(
     email: str,
-    session: Session = Depends(get_session)
+    db_session: Session = Depends(get_db_session)
 ):
-    user = get_user_by_email(session, email)
+    user = get_user_by_email(db_session, email)
     
     return {
         "available": user is None
@@ -93,10 +93,10 @@ def signup(
     username: str = Body(...),
     email: str = Body(...),
     password: str = Body(...),
-    session: Session = Depends(get_session)
+    db_session: Session = Depends(get_db_session)
 ):
-    validate_new_username(session, username)
-    validate_new_email(session, email)
+    validate_new_username(db_session, username)
+    validate_new_email(db_session, email)
     hashed_password = hash_password(password)
 
     new_user = User(
@@ -105,9 +105,9 @@ def signup(
         password_hash=hashed_password
     )
 
-    session.add(new_user)
-    session.commit()
-    session.refresh(new_user)
+    db_session.add(new_user)
+    db_session.commit()
+    db_session.refresh(new_user)
 
     return {
         "message": "User created",
