@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlmodel import Session, select
 from ..database.database import get_db_session
 from ..models.models import User
-from ..core.security import hash_password
+from ..core.security import hash_password, verify_password, create_user_session, cookie
 import re
+from fastapi import Response
+
 
 router = APIRouter()
 router = APIRouter(prefix="/auth")
@@ -109,7 +111,34 @@ def signup(
     db_session.commit()
     db_session.refresh(new_user)
 
-    return {
-        "message": "User created",
-        "user_id": new_user.id
-    }
+    return {"message": "User created"}
+
+# POST endpoint for logging into an account
+# Verify user and create a session 
+@router.post("/login")
+def login(
+    response: Response,
+    username: str = Body(...),
+    password: str = Body(...),
+    db_session: Session = Depends(get_db_session)
+):
+    user = get_user_by_username(db_session, username)
+
+    # If username exists in the db, check that the password matches
+    if user:
+        correct_password = verify_password(password, user.password_hash)
+  
+    # If no username or wrong password, invalid credentials
+    if user is None or not correct_password:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    # Create a session for the user
+    user_session = create_user_session(user.id, user.username)
+
+    # Attach cookie to response so that the browser knows that the session exists
+    cookie.attach_to_response(response, user_session)
+
+    return {"message": "Logged In"}
+
+
+
