@@ -35,3 +35,19 @@ def create_user_session(user_id: int, username: str):
     return session_id
 
 
+class SessionVerifier(BaseSessionVerifier[UUID, SessionData]):
+    identifier = "general_verifier"
+    auto_error = True
+    backend = backend
+    auth_http_exception = HTTPException(
+        status_code=403,
+        detail="Invalid session"
+    )
+
+    def verify_session(self, model: SessionData) -> bool:
+        if not model.user_id:
+            return False
+        return True
+
+
+session_verifier = SessionVerifier()
