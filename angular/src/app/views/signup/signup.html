@@ -87,7 +87,7 @@
                 }
 
                 <button class="mt-4 p-2 rounded-lg bg-background text-white"
-                [disabled]="usernameErrorMessage || usernameTaken || emailErrorMessage || emailTaken || passwordErrors.length > 0"
+                [disabled]="!username || usernameErrorMessage || usernameTaken || !email || emailErrorMessage || emailTaken || !password || passwordErrors.length > 0"
                 (click)="signUp()">
                 Sign Up 
                 </button>
@@ -97,11 +97,8 @@
     }
 
     @if(accountCreated){
-    <img src="logo.png" alt="Logo" class="h-30 object-scale-down">
-    <div class="mt-6 rounded-3xl p-8 bg-success/60 text-success-dark border border-background/40">Your account was successfully created! Redirecting to login...</div>
-
-
+        <img src="logo.png" alt="Logo" class="h-30 object-scale-down">
+        <div class="mt-6 rounded-3xl p-8 bg-success/60 text-success-dark border border-background/40">Your account was successfully created! Redirecting to login...</div>
     }
-
 
 </div>

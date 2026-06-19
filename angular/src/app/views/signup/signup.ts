@@ -4,6 +4,7 @@ import { NgClass } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-signup',
@@ -15,7 +16,8 @@ import { Router } from '@angular/router';
 export class Signup {
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   public username: string = "";
@@ -138,10 +140,12 @@ export class Signup {
     this.authService.signUp(this.username, this.email, this.password).subscribe({
       next: () => {
         this.accountCreated = true;
-        // Wait 5 seconds before redirecting to the login page
+        // Force UI update immediately (and display success message)
+        this.cdr.detectChanges();
+        // Wait 3 seconds before redirecting to the login page
         setTimeout(() => {
           this.router.navigate(['/']);
-        }, 5000);
+        }, 3000);
       },
       error: (err) => {
         console.error(err);
