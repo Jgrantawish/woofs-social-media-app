@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -12,7 +13,10 @@ import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
   styleUrl: './signup.css',
 })
 export class Signup {
-  constructor(private authService:AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   public username: string = "";
   public email: string = "";
@@ -22,6 +26,7 @@ export class Signup {
   public emailErrorMessage: string  = "";
   public usernameErrorMessage: string = "";
   public passwordErrors: string[] = [];
+  public accountCreated: boolean = false;
   private usernameChange$ = new Subject<string>();
   private emailChange$ = new Subject<string>();
 
@@ -132,7 +137,14 @@ export class Signup {
   public signUp(){
     this.authService.signUp(this.username, this.email, this.password).subscribe({
       next: () => {
-        console.log('User created');
+        this.accountCreated = true;
+        // Wait 5 seconds before redirecting to the login page
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 5000);
+      },
+      error: (err) => {
+        console.error(err);
       }
     });
   }
