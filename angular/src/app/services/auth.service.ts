@@ -34,6 +34,16 @@ export class AuthService {
         }
       });
     }
+
+    public logIn(username: string, password: string){
+      return this.http.post(this.apiUrl + '/auth/login', {
+        username: username,
+        password :password
+      });
+    }
+
+
+
 }
 
 
