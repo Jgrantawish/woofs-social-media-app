@@ -1,0 +1,36 @@
+<div class="min-h-screen bg-gradient-to-br from-primary via-secondary to-tertiary flex flex-col items-center justify-center">
+    <h1 class="text-4xl mt-4 mb-12 font-semibold text-background"> Log In to Woofs!</h1>
+  
+    <img src="logo.png" alt="Logo" class="h-30 object-scale-down">
+
+    <div class="w-full max-w-md backdrop-blur-lg bg-white/50 border border-background/40 rounded-3xl shadow-2xl p-8">
+        <div class="flex flex-col m-4">
+
+            <input class="mb-4 px-4 py-2 bg-white border-gray-300 rounded-lg border-2 focus:outline-none"
+            type="text"
+            placeholder="Username"
+            [(ngModel)]="username"
+            />
+
+            <input class="mb-4 px-4 py-2 bg-white border-gray-300 rounded-lg border-2 focus:outline-none"
+            type="password"
+            placeholder="Password"
+            [(ngModel)]="password"
+            />
+
+            @if (invalidCredentials){
+                <div class="p-2 text-red-700">
+                Your username or password was incorrect. Please try again.
+            </div>
+            }
+
+            <button class="mt-4 p-2 rounded-lg bg-background text-white"
+            (click)="logIn()">
+            Log In 
+            </button>
+
+            <a routerLink="/signup" class="mt-4 text-sm text-center text-background nav-link">Don't have an account yet? Create one <b>here</b></a>
+        
+        </div>
+    </div>
+</div>
