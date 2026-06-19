@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlmodel import Session, select
 from ..database.database import get_db_session
 from ..models.models import User
-from ..core.security import hash_password, verify_password, create_user_session, cookie
+from ..core.security import hash_password, verify_password
+from ..core.sessions import create_user_session, cookie
 import re
 from fastapi import Response
 
