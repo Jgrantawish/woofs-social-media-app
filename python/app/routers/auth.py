@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 from ..database.database import get_db_session
 from ..models.models import User
 from ..core.security import hash_password, verify_password
-from ..core.sessions import create_user_session, cookie
+from ..core.sessions import create_user_session, cookie, SessionData, get_user_session
 import re
 from fastapi import Response
 
@@ -148,4 +148,8 @@ async def login(
     return {"message": "Logged In"}
 
 
-
+# GET endpoint for checking theat the user has a valid session
+# Called by the AuthGaurd on the front end to stop unauthenticated users from being able to access specific pages 
+@router.get("/check-session")
+def check_session(user_session: SessionData = Depends(get_user_session)):
+    return user_session

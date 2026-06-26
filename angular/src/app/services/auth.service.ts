@@ -42,7 +42,9 @@ export class AuthService {
       });
     }
 
-
+    public checkSession(){
+      return this.http.get(this.apiUrl + '/auth/check-session');
+    }
 
 }
 

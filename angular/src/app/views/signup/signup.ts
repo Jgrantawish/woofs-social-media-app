@@ -144,7 +144,7 @@ export class Signup {
         this.cdr.detectChanges();
         // Wait 3 seconds before redirecting to the login page
         setTimeout(() => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
         }, 3000);
       },
       error: (err) => {
