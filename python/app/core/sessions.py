@@ -1,10 +1,9 @@
 from fastapi_sessions.backends.implementations import InMemoryBackend
 from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
-from fastapi_sessions.session_verifier import SessionVerifier as BaseSessionVerifier
 from pydantic import BaseModel
 from ..config import settings
 from uuid import UUID, uuid4
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 
 # Store the username in the session
 class SessionData(BaseModel):
@@ -34,20 +33,13 @@ async def create_user_session(user_id: int, username: str):
     await backend.create(session_id, user_data)
     return session_id
 
+# Extract the session ID from the client's cookie
+# Use the session ID to look up the session data associated with it
+async def get_user_session(session_id: UUID = Depends(cookie)) -> SessionData:
+    session = await backend.read(session_id)
 
-class SessionVerifier(BaseSessionVerifier[UUID, SessionData]):
-    identifier = "general_verifier"
-    auto_error = True
-    backend = backend
-    auth_http_exception = HTTPException(
-        status_code=403,
-        detail="Invalid session"
-    )
+    # If no session exists for the session ID then the user is not authenticated
+    if session is None:
+        raise HTTPException(status_code=403, detail="Invalid session")
 
-    def verify_session(self, model: SessionData) -> bool:
-        if not model.user_id:
-            return False
-        return True
-
-
-session_verifier = SessionVerifier()
+    return session

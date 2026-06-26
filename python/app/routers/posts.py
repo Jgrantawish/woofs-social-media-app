@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Body
-from ..core.sessions import session_verifier, SessionData
+from fastapi import APIRouter, Depends
+from ..core.sessions import SessionData, get_user_session
 
 router = APIRouter()
 router = APIRouter(prefix="/posts")
 
 @router.get("/")
-async def get_posts(
-    user_session: SessionData = Depends(session_verifier)
-):
+def get_posts(user_session: SessionData = Depends(get_user_session)):
     return user_session
