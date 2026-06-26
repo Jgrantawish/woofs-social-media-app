@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 
@@ -13,7 +13,8 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './login.css',
 })
 export class Login {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,
+    private router: Router) { }
 
   public username: string = "";
   public password: string = "";
@@ -22,8 +23,7 @@ export class Login {
   logIn() {
     this.authService.logIn(this.username, this.password).subscribe({
       next: () => {
-        console.log("yay");
-  
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error(err);
