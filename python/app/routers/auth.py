@@ -3,7 +3,8 @@ from sqlmodel import Session, select
 from ..database.database import get_db_session
 from ..models.models import User
 from ..core.security import hash_password, verify_password
-from ..core.sessions import create_user_session, cookie, SessionData, get_user_session
+from ..core.sessions import cookie, SessionData, create_user_session, get_user_session, delete_user_session
+from uuid import UUID
 import re
 from fastapi import Response
 
@@ -153,3 +154,15 @@ async def login(
 @router.get("/check-session")
 def check_session(user_session: SessionData = Depends(get_user_session)):
     return user_session
+
+# POST endpoint for logging a user out of their account
+@router.post("/logout")
+async def logout(
+    response: Response,
+    session_id: UUID = Depends(cookie),
+    user_session: SessionData = Depends(get_user_session),
+):
+    await delete_user_session(session_id)
+    cookie.delete_from_response(response)
+
+    return {"message": "Logged out"}

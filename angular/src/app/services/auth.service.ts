@@ -46,6 +46,9 @@ export class AuthService {
       return this.http.get(this.apiUrl + '/auth/check-session');
     }
 
+    public logOut(){
+      return this.http.post(this.apiUrl + '/auth/logout', {});
+    }
 }
 
 

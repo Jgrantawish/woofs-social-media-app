@@ -27,7 +27,7 @@ cookie = SessionCookie(
 backend = InMemoryBackend[UUID, SessionData]()
 
 # Create a session for the specified user
-async def create_user_session(user_id: int, username: str):
+async def create_user_session(user_id: int, username: str) -> UUID:
     session_id = uuid4()
     user_data = SessionData(user_id=user_id,username=username)
     await backend.create(session_id, user_data)
@@ -43,3 +43,7 @@ async def get_user_session(session_id: UUID = Depends(cookie)) -> SessionData:
         raise HTTPException(status_code=403, detail="Invalid session")
 
     return session
+
+# Remove the session from backend memory for the specified session ID
+async def delete_user_session(session_id: UUID) -> None:
+    await backend.delete(session_id)
