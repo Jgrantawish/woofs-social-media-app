@@ -16,10 +16,12 @@ def get_user_by_username(db_session: Session, username: str):
         select(User).where(User.username == username)
     ).first()
 
+
 def get_user_by_email(db_session: Session, email: str):
     return db_session.exec(
         select(User).where(User.email == email)
     ).first()
+
 
 def validate_new_username(db_session: Session, username: str):
     MIN_LENGTH = 3
@@ -44,6 +46,7 @@ def validate_new_username(db_session: Session, username: str):
             status_code=400,
             detail="Username already taken"
         )
+
 
 def validate_new_email(db_session: Session, email: str):
     EMAIL_REGEX = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
@@ -76,6 +79,7 @@ def check_username(
         "available": user is None
     }
 
+
 # GET endpoint for checking email availability
 # Used for frontend validation during signup
 @router.get("/users/check-email")
@@ -88,6 +92,7 @@ def check_email(
     return {
         "available": user is None
     }
+
 
 # POST endpoint for creating a new user
 # Used on the signup page to register a new account
@@ -114,10 +119,11 @@ def signup(
 
     return {"message": "User created"}
 
+
 # POST endpoint for logging into an account
 # Verify user and create a session 
 @router.post("/login")
-def login(
+async def login(
     response: Response,
     username: str = Body(...),
     password: str = Body(...),
@@ -134,7 +140,7 @@ def login(
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Create a session for the user
-    user_session = create_user_session(user.id, user.username)
+    user_session = await create_user_session(user.id, user.username)
 
     # Attach cookie to response so that the browser knows that the session exists
     cookie.attach_to_response(response, user_session)

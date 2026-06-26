@@ -28,10 +28,10 @@ cookie = SessionCookie(
 backend = InMemoryBackend[UUID, SessionData]()
 
 # Create a session for the specified user
-def create_user_session(user_id: int, username: str):
+async def create_user_session(user_id: int, username: str):
     session_id = uuid4()
     user_data = SessionData(user_id=user_id,username=username)
-    backend.create(session_id, user_data)
+    await backend.create(session_id, user_data)
     return session_id
 
 
