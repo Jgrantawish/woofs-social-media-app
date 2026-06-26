@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
@@ -14,7 +15,9 @@ import { AuthService } from '../../services/auth.service';
 })
 export class Login {
   constructor(private authService: AuthService,
-    private router: Router) { }
+    private router: Router,
+    private cdr: ChangeDetectorRef
+) { }
 
   public username: string = "";
   public password: string = "";
@@ -26,7 +29,9 @@ export class Login {
         this.router.navigate(['/home']);
       },
       error: (err) => {
-        console.error(err);
+        this.invalidCredentials = true;
+        // Force UI update immediately (and display error message)
+        this.cdr.detectChanges();
       }
     });
   }
