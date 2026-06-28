@@ -141,7 +141,7 @@ async def login(
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Create a session for the user
-    user_session = await create_user_session(user.id, user.username)
+    user_session = await create_user_session(user.id, user.username, user.profile_pic_url)
 
     # Attach cookie to response so that the browser knows that the session exists
     cookie.attach_to_response(response, user_session)

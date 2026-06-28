@@ -1,6 +1,7 @@
 from fastapi_sessions.backends.implementations import InMemoryBackend
 from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
 from pydantic import BaseModel
+from typing import Optional
 from ..config import settings
 from uuid import UUID, uuid4
 from fastapi import HTTPException, Depends
@@ -9,6 +10,7 @@ from fastapi import HTTPException, Depends
 class SessionData(BaseModel):
     user_id: int
     username: str
+    profile_pic_url: Optional[str]
 
 # Create a session cookie (it uses UUID to identify the session)
 cookie = SessionCookie(
@@ -27,9 +29,9 @@ cookie = SessionCookie(
 backend = InMemoryBackend[UUID, SessionData]()
 
 # Create a session for the specified user
-async def create_user_session(user_id: int, username: str) -> UUID:
+async def create_user_session(user_id: int, username: str, profile_pic_url: Optional[str]) -> UUID:
     session_id = uuid4()
-    user_data = SessionData(user_id=user_id,username=username)
+    user_data = SessionData(user_id=user_id,username=username,profile_pic_url=profile_pic_url)
     await backend.create(session_id, user_data)
     return session_id
 

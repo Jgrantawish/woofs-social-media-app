@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { BehaviorSubject, tap } from 'rxjs';
+
+export interface SessionData {
+  user_id: number;
+  username: string;
+  profile_pic_url: string | null;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +17,13 @@ export class AuthService {
     constructor(private http: HttpClient) {}
 
     private apiUrl = environment.apiUrl;
+    private userSessionSubject = new BehaviorSubject<SessionData | null>(null);
+
+    public userSessionData$ = this.userSessionSubject.asObservable();
+
+    private setSessionData(sessionData: SessionData) {
+      this.userSessionSubject.next(sessionData);
+    }
 
     public signUp(username: string, email: string, password: string){
       return this.http.post(this.apiUrl + '/auth/signup', {
@@ -43,7 +57,13 @@ export class AuthService {
     }
 
     public checkSession(){
-      return this.http.get(this.apiUrl + '/auth/check-session');
+      return this.http.get<SessionData>(this.apiUrl + '/auth/check-session');
+    }
+
+    public loadSession() {
+      return this.checkSession().pipe(
+        tap(sessionData => this.setSessionData(sessionData))
+      );
     }
 
     public logOut(){
