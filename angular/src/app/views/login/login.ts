@@ -14,14 +14,15 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrl: './login.css',
 })
 export class Login {
-  constructor(private authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-) { }
 
   public username: string = "";
   public password: string = "";
   public invalidCredentials: boolean = false;
+
+  constructor(private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   logIn() {
     this.authService.logIn(this.username, this.password).subscribe({

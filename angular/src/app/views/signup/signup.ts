@@ -14,11 +14,6 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrl: './signup.css',
 })
 export class Signup {
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {}
 
   public username: string = "";
   public email: string = "";
@@ -32,6 +27,11 @@ export class Signup {
   private usernameChange$ = new Subject<string>();
   private emailChange$ = new Subject<string>();
 
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(){
     // Calls the backend to check that the username is not already in use 
