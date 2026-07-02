@@ -1,0 +1,56 @@
+<h2 class="bg-secondary p-6 text-xl text-background border-b border-background/40">Create New Post</h2>
+
+<mat-dialog-content>
+    <div class="flex flex-col items-center">
+
+        @if(!imagePreview) {
+            <button class="w-1/2 text-center px-4 py-3 bg-gray-100 border-2 border-dashed border-gray-400 text-gray-500 rounded-lg hover:bg-gray-200 transition"
+            (click)="fileInput.click()">
+                Upload Image
+            </button>
+            
+            <input
+            hidden
+            #fileInput
+            type="file"
+            accept="image/*"
+            (change)="onImageSelected($event)">
+        }
+        @else {
+            <img [src]="imagePreview"
+            class="w-full max-w-xs max-h-64 object-cover rounded-lg border border-background/40"
+            />
+        }
+
+        @if(imageError){
+          <div class="p-2 text-red-700">
+                {{imageError}}
+            </div>
+        }
+
+            <textarea
+                class="w-full m-4 p-4 border rounded-sm border-gray-400 focus:outline-none focus:ring-2 focus:ring-background"
+                placeholder="What's on your mind?..."
+                rows="6"
+                maxlength=maxCharacters
+                [(ngModel)]="content">
+            </textarea>
+
+        </div>
+         <div class="pb-2" [ngClass]="isOverCharacterLimit() ? 'text-red-500' : 'text-gray-500'" align="end">
+                {{ content?.length || 0 }}/{{ maxCharacters }}
+        </div>
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="!justify-between w-full bg-secondary border-t border-background/40" align="end">
+  
+    <button class="rounded-full py-2 px-4 bg-white border border-background/40 text-background" (click)="cancel()">Cancel</button>
+
+    <button class="rounded-full py-2 px-4 bg-success border border-background/40 text-white disabled:opacity-50"
+        [disabled]="(!imagePreview && !content.trim()) || isOverCharacterLimit() || imageError"
+        (click)="post()">
+        Post
+    </button>
+</mat-dialog-actions>
