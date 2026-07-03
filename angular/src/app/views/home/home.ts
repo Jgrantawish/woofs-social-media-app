@@ -38,4 +38,17 @@ export class Home {
     });
   }
 
+
+  public logOut() {
+    this.authService.logOut().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+
+  }
+
 }
