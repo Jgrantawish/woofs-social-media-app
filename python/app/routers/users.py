@@ -8,7 +8,7 @@ router = APIRouter(prefix="/users")
 
 # GET endpoint for fetching profile pictures from the backend uploads folder
 # Users must be logged in in order to be able to see profile pictures  
-@router.get("/profile-picture/{filename}")
+@router.get("/profile-pictures/{filename}")
 async def get_profile_picture(
     filename: str,
     user_session: SessionData = Depends(get_user_session),

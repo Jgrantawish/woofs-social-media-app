@@ -19,7 +19,9 @@ export class Home {
   public sessionData$!: Observable<SessionData | null>;
   public posts$!: Observable<any>;
   private apiUrl = environment.apiUrl;
-  public profilePicApiUrl = this.apiUrl + "/users/profile-picture/";
+  public profilePicApiUrl = this.apiUrl + "/users/profile-pictures/";
+  public postImageApiUrl = this.apiUrl + "/posts/images/";
+
   
   constructor(private authService: AuthService,
     private postService: PostService,

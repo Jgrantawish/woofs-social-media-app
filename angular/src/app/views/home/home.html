@@ -75,10 +75,10 @@
 
                 <!-- Main Post Content -->
                 @if (post.picture_url) {
-                    <img [src]="post.picture_url" class="w-full max-h-[400px] object-cover" />
+                    <img [src]="postImageApiUrl + post.picture_url" class="w-full max-h-[400px] object-cover" />
                 }
                 @if (post.content){
-                    <div class="px-4 pb-3">
+                    <div class="px-4 py-3">
                         <p class="text-gray-700">{{ post.content }}</p>
                     </div>
                 }

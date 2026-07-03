@@ -52,3 +52,16 @@ async def upload_post_image(file: UploadFile) -> str:
         await file.close()
 
     return str(filename)
+
+# Use the specified filename to fetch a post picture from the uploads folder
+def get_post_image(filename: str):
+    UPLOAD_DIR = Path("uploads/post_images")
+    file_path = UPLOAD_DIR / filename
+
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404, 
+            detail="File does not exist"
+        )
+
+    return FileResponse(file_path)

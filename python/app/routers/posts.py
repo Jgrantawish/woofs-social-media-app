@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from ..core.sessions import SessionData, get_user_session
-from ..core.uploads import upload_post_image
+from ..core.uploads import upload_post_image, get_post_image
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 from sqlalchemy import func, exists
@@ -92,6 +92,15 @@ def get_posts(
         to_post_response(post, user_session.user_id, like_count, has_liked)
         for post, like_count, has_liked in results
     ]
+
+
+# GET endpoint for fetching pictures associated with posts from the backend uploads folder
+@router.get("/images/{filename}")
+async def get_picture(
+    filename: str,
+    user_session: SessionData = Depends(get_user_session),
+):
+    return get_post_image(filename)
 
 
 # POST endpoint for posting a new social media post by the logged in user
