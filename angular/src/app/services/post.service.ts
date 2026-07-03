@@ -12,6 +12,10 @@ export class PostService {
 
   constructor(private http: HttpClient) {}
 
+  public getPosts(): Observable<any>{
+    return this.http.get(this.apiUrl + '/posts/');
+  }
+
   public createPost(image?: File | null, content?: string): Observable<any> {
 
     // Use FormData to send image file 
