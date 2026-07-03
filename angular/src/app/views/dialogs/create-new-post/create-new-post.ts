@@ -11,6 +11,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
+import { PostService } from '../../../services/post.service';
+
 
 @Component({
   selector: 'app-create-new-post',
@@ -39,9 +41,9 @@ export class CreateNewPost {
   private maxSizeBytes = this.maxSizeMB * 1024 * 1024;
 
 
-
   constructor(
-    private dialogRef: MatDialogRef<CreateNewPost>
+    private dialogRef: MatDialogRef<CreateNewPost>,
+    private postService: PostService
   ) {}
 
   ngOnDestroy() {
@@ -89,6 +91,18 @@ export class CreateNewPost {
   }
 
   public post(){
+    this.postService.createPost(this.selectedFile, this.content
+    )
+    .subscribe({
+      next: (res) => {
+        console.log('Post created:', res);
+        },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+
+   this.dialogRef.close(); 
 
   }
 }
