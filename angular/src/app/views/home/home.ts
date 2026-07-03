@@ -17,7 +17,7 @@ export class Home {
 
   public sessionData$!: Observable<SessionData | null>;
   private apiUrl = environment.apiUrl;
-  public profilePicApiUrl = this.apiUrl + "/uploads/profile-picture/";
+  public profilePicApiUrl = this.apiUrl + "/users/profile-picture/";
   
   constructor(private authService: AuthService,
     private dialog: MatDialog,
