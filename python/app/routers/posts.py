@@ -11,7 +11,6 @@ from datetime import datetime
 from typing import Optional
 
 
-router = APIRouter()
 router = APIRouter(prefix="/posts")
 
 
@@ -86,8 +85,8 @@ def get_posts(
 
     # Convert each db row into the response schema before sending it to the front end 
     return [
-        to_post_response(post, user_session.user_id, like_count, has_liked)
-        for post, like_count, has_liked in results
+        to_post_response(post, user_session.user_id, like_count, has_liked, comment_count)
+        for post, like_count, has_liked, comment_count in results
     ]
 
 
@@ -108,13 +107,24 @@ async def create_new_post(
     user_session: SessionData = Depends(get_user_session),
     db_session: Session = Depends(get_db_session)
 ):
+    MAX_CONTENT_LENGTH = 280
+    content = content.strip() if content else None
+    
     # Check that the post is not completely empty
-    if not image and not (content and content.strip()):
+    if not image and not content:
         raise HTTPException(
             status_code=400,
             detail="Post must contain an image or text"
         )
     
+    # If content was uploaded, check it is not longer than max character length
+    if content and len(content) > MAX_CONTENT_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Content must be less than {MAX_CONTENT_LENGTH} characters"
+        )
+    
+
     image_url = None
 
     # If an image file was uploaded as part of the post, save it to the uploads folder
@@ -124,7 +134,7 @@ async def create_new_post(
     new_post = Post(
         user_id = user_session.user_id,
         picture_url= image_url,
-        content=content.strip() if content and content.strip() else None,
+        content=content,
         created_date=datetime.now()
     )
 
