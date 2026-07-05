@@ -8,7 +8,6 @@ from ..models.models import Comment
 from ..models.responses import CommentResponse
 
 
-router = APIRouter()
 router = APIRouter(prefix="/comments")
 
 

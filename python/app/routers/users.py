@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from ..core.sessions import SessionData, get_user_session
 from ..core.uploads import get_user_profile_picture
 
-router = APIRouter()
+
 router = APIRouter(prefix="/users")
 
 
