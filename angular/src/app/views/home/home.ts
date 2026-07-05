@@ -7,10 +7,11 @@ import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateNewPost } from '../dialogs/create-new-post/create-new-post';
 import { PostService } from '../../services/post.service';
+import { Post } from '../post/post';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule],
+  imports: [CommonModule, Post],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -20,8 +21,6 @@ export class Home {
   public posts$!: Observable<any>;
   private apiUrl = environment.apiUrl;
   public profilePicApiUrl = this.apiUrl + "/users/profile-pictures/";
-  public postImageApiUrl = this.apiUrl + "/posts/images/";
-
   
   constructor(private authService: AuthService,
     private postService: PostService,

@@ -3,6 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
+export interface PostData {
+    id: number;
+    picture_url: string | null;
+    content: string | null;
+    created_date: Date;
+    last_updated: Date | null;
+    owner_username: string;
+    owner_profile_pic_url: string | null;
+    like_count: number
+    has_liked: boolean
+    comment_count: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,5 +44,12 @@ export class PostService {
     }
 
     return this.http.post(this.apiUrl + '/posts/new', formData);
+  }
+
+  public addComment(postId: number, content: string){
+    return this.http.post(this.apiUrl + '/posts/add-comment', {
+      post_id: postId,
+      content: content
+    });
   }
 }

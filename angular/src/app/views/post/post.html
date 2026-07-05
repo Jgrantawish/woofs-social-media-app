@@ -1,0 +1,89 @@
+<div class="bg-white/60 border border-background/40 rounded-2xl shadow-md overflow-hidden">
+
+    <!-- Post Header -->
+    <div class="flex items-center gap-3 p-4">
+        @if (post.owner_profile_pic_url){
+            <img class="w-10 h-10 rounded-full border border-background object-cover" [src]="profilePicApiUrl + post.owner_profile_pic_url" alt="profile" />
+        }
+        @else{
+            <img class="w-10 h-10 rounded-full border border-background object-cover" src="default_profile_pic.png" alt="profile" />
+        }
+        <div>
+            <p class="font-semibold text-background">{{ post.owner_username }}</p>
+        
+            @if (post.last_updated){
+                <p class="text-xs text-background">Last edited: <span class="text-gray-600">{{ post.last_updated }}</span></p>
+            }
+            @else{
+                <p class="text-xs text-background">Posted: <span class="text-gray-600">{{ post.created_date }}</span></p>
+            }
+        </div>
+    </div>
+
+    <!-- Main Post Content -->
+    @if (post.picture_url) {
+        <img [src]="postImageApiUrl + post.picture_url" class="w-full max-h-[400px] object-cover" />
+    }
+    @if (post.content){
+        <div class="px-4 py-3">
+            <p class="text-gray-700">{{ post.content }}</p>
+        </div>
+    }
+
+    <!-- Actions -->
+    <div class="flex items-center justify-between px-4 py-3 border-background/40 border-t">
+
+        <button class="flex items-center gap-2 text-background">
+            💬 <span>Comments</span>
+        </button>
+
+        <button class="flex items-center gap-2 text-background">
+            @if(post.has_liked){
+                <button class="text-lg">❤️</button>
+            }
+            @else{
+                <button class="text-lg">♡</button>
+            }
+            <span>{{ post.like_count }} Likes</span>
+        </button>
+
+    </div>
+<!-- 
+    @for (comment of post.comments; track comment.id) {
+    <div class="flex gap-3 m-4">
+
+        <img [src]="comment.avatar" class="w-8 h-8 rounded-full object-cover" />
+
+        <div class="flex-1">
+
+            <div class="bg-white rounded-2xl px-4 py-2 shadow-sm">
+                <p class="font-medium text-sm">
+                    {{ comment.user }}
+                </p>
+
+                <p class="text-sm text-gray-700">
+                    {{ comment.text }}
+                </p>
+            </div>
+
+            <p class="text-xs text-gray-400 mt-1 ml-2">
+                {{ comment.time }}
+            </p>
+
+        </div>
+
+    </div>
+    } -->
+
+    <!-- Write comment -->
+    <div class="flex items-center gap-4 mx-8 my-4">
+        <input [(ngModel)]="newCommentContent" class="w-full bg-white border-2 border-gray-300 rounded-full px-4 py-2 text-sm"
+            placeholder="Write a comment..." />
+        <button class="px-4 py-2 bg-background rounded-full text-white"
+        [disabled]="!(newCommentContent?.trim())"
+        (click)="postComment()">
+            Post
+        </button>
+    </div>
+
+</div>
