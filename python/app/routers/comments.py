@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from ..core.sessions import SessionData, get_user_session
 from ..database.database import get_db_session
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
-from sqlalchemy import func, exists
 from ..models.models import Comment
 from ..models.responses import CommentResponse
+from datetime import datetime
 
 
 router = APIRouter(prefix="/comments")
@@ -50,5 +50,33 @@ async def get_comments(
     ]
 
 
-
 # POST endpoint for adding a comment to a post
+@router.post("/new")
+async def create_new_comment(
+    post_id: int = Body(...),
+    content: str = Body(...),
+    user_session: SessionData = Depends(get_user_session),
+    db_session: Session = Depends(get_db_session)
+):
+    MAX_CONTENT_LENGTH = 280
+    content = content.strip()
+
+    # Check that the comment is of approriate length
+    if not content or len(content) > MAX_CONTENT_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Content must be less than {MAX_CONTENT_LENGTH} characters and contain text"
+        )
+    
+    new_comment = Comment(
+        user_id = user_session.user_id,
+        post_id=post_id,
+        content=content,
+        created_date=datetime.now()
+    )
+
+    db_session.add(new_comment)
+    db_session.commit()
+    db_session.refresh(new_comment)
+
+    return {"message": "Comment added"}
