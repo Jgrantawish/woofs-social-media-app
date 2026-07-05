@@ -12,6 +12,7 @@ class CommentResponse (SQLModel):
 
     owner_username: str
     owner_profile_pic_url: Optional[str] = None
+    is_owner: bool
 
 class PostResponse (SQLModel):
     id: int
@@ -22,8 +23,9 @@ class PostResponse (SQLModel):
 
     owner_username: str
     owner_profile_pic_url: Optional[str] = None
+    is_owner: bool
 
     like_count: int
     has_liked: bool
 
-    comments: list[CommentResponse]
+    comment_count: int

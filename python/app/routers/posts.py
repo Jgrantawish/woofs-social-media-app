@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
 from sqlalchemy import func, exists
 from ..models.models import Post, Comment, Like
-from ..models.responses import PostResponse, CommentResponse
+from ..models.responses import PostResponse
 from ..database.database import get_db_session
 from datetime import datetime
 from typing import Optional
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/posts")
 
 
 # Convert ORM objects and precomputed metadata into PostResponse schema
-def to_post_response(post: Post, logged_in_user_id: int, like_count, has_liked) -> PostResponse:
+def to_post_response(post: Post, logged_in_user_id: int, like_count, has_liked, comment_count) -> PostResponse:
     return PostResponse(
         id=post.id,
         picture_url=post.picture_url,
@@ -26,21 +26,12 @@ def to_post_response(post: Post, logged_in_user_id: int, like_count, has_liked) 
 
         owner_username=post.user.username,
         owner_profile_pic_url=post.user.profile_pic_url,
+        is_owner = post.user_id == logged_in_user_id,
 
         like_count=like_count,
         has_liked=has_liked,
 
-        comments=[
-            CommentResponse(
-                id=comment.id,
-                content=comment.content,
-                created_date=comment.created_date,
-
-                owner_username=comment.user.username,
-                owner_profile_pic_url=comment.user.profile_pic_url,
-            )
-            for comment in post.comments
-        ],
+        comment_count=comment_count
     )
 
 # GET endpoint for fetching all social metia posts (and their associated metadata)
@@ -67,18 +58,24 @@ def get_posts(
         ).scalar_subquery()
     )
 
+    # Subquery that returns the total number of comments on a post
+    comment_count_subquery = (
+        select(func.count(Comment.id))
+        .where(Comment.post_id == Post.id)
+        .scalar_subquery()
+    )
+
     statement = (
         select(
             Post,
-            # Attach computed like count and liked boolean flag as extra selected columns
+            # Attach computed like count, comment count and liked boolean flag as extra selected columns
             like_count_subquery.label("like_count"),
-            has_liked_subquery.label("has_liked")
+            has_liked_subquery.label("has_liked"),
+            comment_count_subquery.label("comment_count")
             )
         .options(
             # Eager load the related user for each post (avoids extra queries)
-            selectinload(Post.user),
-            # Eager load all comments for each post, and their associated user data
-            selectinload(Post.comments).selectinload(Comment.user),
+            selectinload(Post.user)
         )
         # Sort posts so that the newest posts appear first
         .order_by(Post.created_date.desc())
