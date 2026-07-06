@@ -37,7 +37,14 @@ export class Post {
       this.postService.addComment(this.post.id, this.newCommentContent).subscribe({
       next: () => {
         // Clear comment input box ready for another comment
-        this.newCommentContent = "";     
+        this.newCommentContent = "";   
+        // Increment the comment count 
+        this.post.comment_count ++;  
+        // If comments have already been loaded, reload them to fetch the new comment 
+        if (this.commentsLoaded) {
+          this.loadComments();
+        }
+        // Update GUI
         this.cdr.detectChanges();
       },
       error: (err) => {
