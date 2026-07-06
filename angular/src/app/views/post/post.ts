@@ -31,25 +31,52 @@ export class Post {
   public profilePicApiUrl = this.apiUrl + "/users/profile-pictures/";
   public postImageApiUrl = this.apiUrl + "/posts/images/";
 
-
-  public postComment() {
-    if (this.newCommentContent?.trim()){
-      this.postService.addComment(this.post.id, this.newCommentContent).subscribe({
+  public addLike(){
+    this.postService.addLike(this.post.id).subscribe({
       next: () => {
-        // Clear comment input box ready for another comment
-        this.newCommentContent = "";   
-        // Increment the comment count 
-        this.post.comment_count ++;  
-        // If comments have already been loaded, reload them to fetch the new comment 
-        if (this.commentsLoaded) {
-          this.loadComments();
-        }
+        this.post.has_liked = true;
+        this.post.like_count ++;
         // Update GUI
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error(err);
       }
+    });
+  }
+
+  public removeLike(){
+    this.postService.removeLike(this.post.id).subscribe({
+      next: () => {
+        this.post.has_liked = false;
+        this.post.like_count --;
+        // Update GUI
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  }
+
+  public postComment() {
+    if (this.newCommentContent?.trim()){
+      this.postService.addComment(this.post.id, this.newCommentContent).subscribe({
+        next: () => {
+          // Clear comment input box ready for another comment
+          this.newCommentContent = "";   
+          // Increment the comment count 
+          this.post.comment_count ++;  
+          // If comments have already been loaded, reload them to fetch the new comment 
+          if (this.commentsLoaded) {
+            this.loadComments();
+          }
+          // Update GUI
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error(err);
+        }
       });
     }
   }
@@ -61,7 +88,6 @@ export class Post {
       this.loadComments();
     }
   }
-
 
   private loadComments() {
     this.postService.getComments(this.post.id).subscribe({
@@ -75,4 +101,5 @@ export class Post {
       }
     });
   }
+
 }

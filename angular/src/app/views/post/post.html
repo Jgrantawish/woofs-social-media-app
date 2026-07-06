@@ -39,15 +39,15 @@
             💬 <span class="hover:underline">{{ post.comment_count }} Comments</span>
         </button>
 
-        <button class="flex items-center gap-2 text-background">
+        <div class="flex items-center gap-2 text-background">
             @if(post.has_liked){
-                <button class="text-lg">❤️</button>
+                <button class="text-lg" (click)="removeLike()">❤️</button>
             }
             @else{
-                <button class="text-lg">♡</button>
+                <button class="text-lg" (click)="addLike()">♡</button>
             }
             <span>{{ post.like_count }} Likes</span>
-        </button>
+        </div>
 
     </div>
 

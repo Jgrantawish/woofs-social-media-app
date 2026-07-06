@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Body
 from ..core.sessions import SessionData, get_user_session
 from ..core.uploads import upload_post_image, get_post_image
-from sqlmodel import Session, select
+from sqlmodel import Session, select, delete
 from sqlalchemy.orm import selectinload
 from sqlalchemy import func, exists
 from ..models.models import Post, Comment, Like
@@ -143,3 +143,57 @@ async def create_new_post(
     db_session.refresh(new_post)
 
     return {"message": "Post created"}
+
+
+# POST endpoint for liking a specified post
+@router.post("/add-like")
+async def add_like(
+    post_id: int = Body(..., embed=True),
+    user_session: SessionData = Depends(get_user_session),
+    db_session: Session = Depends(get_db_session)
+):
+    # Check that the logged in user has not already liked this post
+    existing_like = db_session.exec(
+        select(Like).where(
+            Like.post_id == post_id,
+            Like.user_id == user_session.user_id,
+        )
+    ).first()
+
+    if existing_like:
+        raise HTTPException(
+            status_code=400,
+            detail="You cannot like a post more than once"
+        )
+
+    new_like = Like(
+        post_id=post_id,
+        user_id=user_session.user_id,
+    )
+
+    db_session.add(new_like)
+    db_session.commit()
+    db_session.refresh(new_like)
+
+    return {"message": "Like added to post"}    
+
+
+# DELETE endpoint for removing a like from a post
+@router.delete("/remove-like")
+async def remove_like(
+    post_id: int = Body(...),
+    user_session: SessionData = Depends(get_user_session),
+    db_session: Session = Depends(get_db_session)
+):
+    statement = (
+        delete(Like)
+        .where(
+            Like.post_id == post_id,
+            Like.user_id == user_session.user_id,
+        )
+    )
+
+    db_session.exec(statement)
+    db_session.commit()
+
+    return {"message": "Like removed from post"}

@@ -63,17 +63,16 @@ export class PostService {
     }
 
     public addLike(postId: number) {
-        return this.http.post(this.apiUrl + '/posts/add-like', {postId});
+        return this.http.post(this.apiUrl + '/posts/add-like', {post_id: postId});
     }
 
     public removeLike(postId: number) {
-        return this.http.post(this.apiUrl + '/posts/remove-like', {postId});
+        return this.http.delete(this.apiUrl + '/posts/remove-like', {body:postId});
     }
 
     public getComments(postId: number): Observable<CommentData[]>{
         return this.http.get<CommentData[]>(this.apiUrl + '/comments/'+ postId);
     }
-
 
     public addComment(postId: number, content: string) {
         return this.http.post(this.apiUrl + '/comments/new', {
