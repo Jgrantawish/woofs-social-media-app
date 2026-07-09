@@ -1,9 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostService, PostData, CommentData } from '../../services/post.service';
 import { environment } from '../../../environments/environment';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, EventEmitter } from '@angular/core';
 import moment from 'moment';
 
 @Component({
@@ -20,6 +20,7 @@ export class Post {
   ) {}
 
   @Input({ required: true }) post!: PostData;
+  @Output() change = new EventEmitter<number>();
 
   // UI state (local to each post instance)
   public showComments: boolean = false;
@@ -31,6 +32,22 @@ export class Post {
   private apiUrl = environment.apiUrl;
   public profilePicApiUrl = this.apiUrl + "/users/profile-pictures/";
   public postImageApiUrl = this.apiUrl + "/posts/images/";
+
+  public deletePost(){
+    const confirmed = confirm('Are you sure you want to delete this item?');
+
+    if (confirmed){
+      this.postService.deletePost(this.post.id).subscribe({
+        next: () => {
+          // Emit event to tell the home page that a post has been deleted and so the feed needs to be refreshed 
+          this.change.emit(this.post.id);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+    }
+  }
 
   public addLike(){
     this.postService.addLike(this.post.id).subscribe({

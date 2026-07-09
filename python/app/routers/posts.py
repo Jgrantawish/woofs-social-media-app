@@ -145,6 +145,30 @@ async def create_new_post(
     return {"message": "Post created"}
 
 
+# DELETE endpoint deleting a specified post
+@router.delete("/delete")
+def delete_post(
+    post_id: int = Body(...),
+    user_session: SessionData = Depends(get_user_session),
+    db: Session = Depends(get_db_session),
+):
+    post = db.get(Post, post_id)
+    image_url = post.picture_url
+
+    # Check post exists
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    # Check ownership
+    if post.user_id != user_session.user_id:
+        raise HTTPException(status_code=403, detail="Not allowed")
+
+    db.delete(post)
+    db.commit()
+
+    return {"message": "Post deleted"}
+
+
 # POST endpoint for liking a specified post
 @router.post("/add-like")
 async def add_like(

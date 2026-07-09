@@ -58,8 +58,7 @@ export class PostService {
     }
 
     public deletePost(postId: number){
-        return this.http.delete(this.apiUrl + '/posts/delete/' + postId);
-
+        return this.http.delete(this.apiUrl + '/posts/delete', {body:postId});
     }
 
     public addLike(postId: number) {
@@ -79,9 +78,5 @@ export class PostService {
             post_id: postId,
             content: content
         });
-    }
-
-    public deleteComment(commentId: number) {
-    
     }
 }

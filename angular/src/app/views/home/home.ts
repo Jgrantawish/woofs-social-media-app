@@ -30,6 +30,10 @@ export class Home {
 
   ngOnInit() {
     this.sessionData$ = this.authService.userSessionData$;
+    this.getPosts();
+  }
+
+  public getPosts(){
     this.posts$ = this.postService.getPosts();
   }
 
@@ -42,7 +46,7 @@ export class Home {
     createPostDialogRef.afterClosed().subscribe((result) => {
     // Only re fetch posts if a new post was actually created
       if (result) {
-        this.posts$ = this.postService.getPosts();
+            this.getPosts();
       }
     });
     

@@ -1,27 +1,46 @@
 <div class="bg-white/60 border border-background/40 rounded-2xl shadow-md overflow-hidden">
 
     <!-- Post Header -->
-    <div class="flex items-center gap-3 p-4">
-        @if (post.owner_profile_pic_url){
-            <img class="w-10 h-10 rounded-full border border-background object-cover" [src]="profilePicApiUrl + post.owner_profile_pic_url" alt="profile" />
-        }
-        @else{
-            <img class="w-10 h-10 rounded-full border border-background object-cover" src="default_profile_pic.png" alt="profile" />
-        }
-        <div>
-            <p class="font-semibold text-background">{{ post.owner_username }}</p>
-        
-            @if (post.last_updated){
-                <p class="text-xs text-background">Last edited: 
-                <span class="text-gray-600">{{ moment(post.last_updated).fromNow() }}</span>
-                </p>
+    <div class="flex items-center justify-between p-4">
+
+        <div class="flex items-center gap-3">
+            @if (post.owner_profile_pic_url){
+                <img class="w-10 h-10 rounded-full border border-background object-cover" [src]="profilePicApiUrl + post.owner_profile_pic_url" alt="profile" />
             }
             @else{
-                <p class="text-xs text-background">Posted: 
-                <span class="text-gray-600">{{ moment(post.created_date).fromNow() }}</span>
-                </p>
+                <img class="w-10 h-10 rounded-full border border-background object-cover" src="default_profile_pic.png" alt="profile" />
             }
+            <div>
+                <p class="font-semibold text-background">{{ post.owner_username }}</p>
+            
+                @if (post.last_updated){
+                    <p class="text-xs text-background">Last edited: 
+                    <span class="text-gray-600">{{ moment(post.last_updated).fromNow() }}</span>
+                    </p>
+                }
+                @else{
+                    <p class="text-xs text-background">Posted: 
+                    <span class="text-gray-600">{{ moment(post.created_date).fromNow() }}</span>
+                    </p>
+                }
+            </div>
         </div>
+
+        @if (post.is_owner){
+            <div class="flex gap-2">
+                <button 
+                    class="px-2 py-1 bg-tertiary rounded-lg text-white hover:shadow-md">
+                    Edit
+                </button>
+
+                <button 
+                    class="px-2 py-1 bg-background rounded-lg text-white hover:bg-red-600"
+                    (click)="deletePost()">
+                    Delete
+                </button>
+            </div>
+        }
+
     </div>
 
     <!-- Main Post Content -->
@@ -95,7 +114,7 @@
         <input class="w-full bg-white border-2 border-gray-300 rounded-full px-4 py-2 text-sm"
             placeholder="Write a comment..." 
             [(ngModel)]="newCommentContent"/>
-        <button class="px-4 py-2 bg-background rounded-full text-white disabled:opacity-50"
+        <button class="px-4 py-2 bg-background rounded-full text-white hover:shadow-md disabled:opacity-50"
         [disabled]="!(newCommentContent?.trim())"
         (click)="postComment()">
             Post
