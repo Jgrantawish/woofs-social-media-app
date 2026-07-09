@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { PostService, PostData, CommentData } from '../../services/post.service';
 import { environment } from '../../../environments/environment';
 import { ChangeDetectorRef } from '@angular/core';
-
+import moment from 'moment';
 
 @Component({
   selector: 'app-post',
@@ -26,6 +26,7 @@ export class Post {
   public comments: CommentData[] = [];
   public commentsLoaded: boolean = false;
   public newCommentContent: string = "";
+  public moment = moment;
 
   private apiUrl = environment.apiUrl;
   public profilePicApiUrl = this.apiUrl + "/users/profile-pictures/";

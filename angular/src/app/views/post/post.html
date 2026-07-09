@@ -12,10 +12,14 @@
             <p class="font-semibold text-background">{{ post.owner_username }}</p>
         
             @if (post.last_updated){
-                <p class="text-xs text-background">Last edited: <span class="text-gray-600">{{ post.last_updated }}</span></p>
+                <p class="text-xs text-background">Last edited: 
+                <span class="text-gray-600">{{ moment(post.last_updated).fromNow() }}</span>
+                </p>
             }
             @else{
-                <p class="text-xs text-background">Posted: <span class="text-gray-600">{{ post.created_date }}</span></p>
+                <p class="text-xs text-background">Posted: 
+                <span class="text-gray-600">{{ moment(post.created_date).fromNow() }}</span>
+                </p>
             }
         </div>
     </div>
@@ -76,8 +80,8 @@
                     </p>
                 </div>
 
-                <p class="text-xs text-gray-400 mt-1 ml-2">
-                    {{ comment.created_date }}
+                <p class="text-xs text-gray-600 mt-1 ml-2">
+                    {{ moment(comment.created_date).fromNow() }}
                 </p>
 
             </div>
