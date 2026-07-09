@@ -65,3 +65,23 @@ def get_post_image(filename: str):
         )
 
     return FileResponse(file_path)
+
+# Use the specified filename to delete a post picture from the uploads folder
+def delete_post_image(filename: str):
+    UPLOAD_DIR = Path("uploads/post_images")
+    file_path = UPLOAD_DIR / filename
+
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Image not found"
+        )
+
+    try:
+        # Delete the file
+        file_path.unlink()
+    except OSError as e:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to delete image"
+        ) from e

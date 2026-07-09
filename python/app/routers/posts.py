@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Body
 from ..core.sessions import SessionData, get_user_session
-from ..core.uploads import upload_post_image, get_post_image
+from ..core.uploads import upload_post_image, get_post_image, delete_post_image
 from sqlmodel import Session, select, delete
 from sqlalchemy.orm import selectinload
 from sqlalchemy import func, exists
@@ -165,6 +165,10 @@ def delete_post(
 
     db.delete(post)
     db.commit()
+
+    # If the deleted post contained an image, remove it from our uploads folder
+    if image_url:
+        delete_post_image(image_url)
 
     return {"message": "Post deleted"}
 
