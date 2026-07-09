@@ -87,22 +87,17 @@ export class CreateNewPost {
   }
 
   public cancel(){
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   public post(){
     this.postService.createPost(this.selectedFile, this.content
     )
     .subscribe({
-      next: (res) => {
-        console.log('Post created:', res);
-        },
-      error: (err) => {
+    next: () => this.dialogRef.close(true),
+    error: (err) => {
         console.error(err);
       }
     });
-
-   this.dialogRef.close(); 
-
   }
 }

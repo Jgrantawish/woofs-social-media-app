@@ -34,9 +34,18 @@ export class Home {
   }
 
   public createPost() {
-    this.dialog.open(CreateNewPost, {
+
+    const createPostDialogRef = this.dialog.open(CreateNewPost, {
       width: '700px',
     });
+
+    createPostDialogRef.afterClosed().subscribe((result) => {
+    // Only re fetch posts if a new post was actually created
+      if (result) {
+        this.posts$ = this.postService.getPosts();
+      }
+    });
+    
   }
 
 
