@@ -55,13 +55,13 @@ class Post(SQLModel, table=True):
     last_updated : Optional[datetime] = None
 
     user: User = Relationship(back_populates="posts")
-    comments: list["Comment"] = Relationship(back_populates="post")
-    likes: list["Like"] = Relationship(back_populates="post")
+    comments: list["Comment"] = Relationship(back_populates="post", cascade_delete=True)
+    likes: list["Like"] = Relationship(back_populates="post", cascade_delete=True)
 
 
 class Like (SQLModel, table=True):
     user_id : int = Field(primary_key=True, foreign_key="user.id")
-    post_id : int = Field(primary_key=True, foreign_key="post.id")
+    post_id : int = Field(primary_key=True, foreign_key="post.id", ondelete="CASCADE")
 
     user: User = Relationship(back_populates="likes")
     post: Post = Relationship(back_populates="likes")
@@ -70,7 +70,7 @@ class Like (SQLModel, table=True):
 class Comment (SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id : int = Field(foreign_key="user.id")
-    post_id : int = Field(foreign_key="post.id")
+    post_id : int = Field(foreign_key="post.id", ondelete="CASCADE")
     content : str
     # Index so that we can sort comments based on their created date 
     created_date : datetime =  Field(default_factory=datetime.now, index=True)
