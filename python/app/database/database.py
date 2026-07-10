@@ -4,7 +4,7 @@ from ..models.models import SQLModel
 
 # Setup the Database Connection
 sqlite_url = "sqlite:///woofs.db"
-engine = create_engine(sqlite_url, echo=True) # echo=True shows the raw SQL in your console!
+engine = create_engine(sqlite_url)
 
 # Create all of the above tables
 def create_db_and_tables():
