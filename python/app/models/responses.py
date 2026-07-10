@@ -29,3 +29,9 @@ class PostResponse (SQLModel):
     has_liked: bool
 
     comment_count: int
+
+
+class UserResponse(SQLModel):
+    id: int
+    username: str
+    profile_pic_url: Optional[str] = None

@@ -36,8 +36,19 @@ export class PostService {
 
     constructor(private http: HttpClient) { }
 
-    public getPosts(): Observable<PostData[]> {
-        return this.http.get<PostData[]>(this.apiUrl + '/posts/');
+    public getPosts(userId?: number | null): Observable<PostData[]> {
+        // Only pass a userId to the backend if we are searching for a specific user's posts
+        let params = {};
+
+        if (userId) {
+            params = {
+            searched_user_id: userId
+            };
+        }
+
+        return this.http.get<PostData[]>(this.apiUrl + '/posts/', {
+            params
+        });
     }
 
     public createPost(image?: File | null, content?: string): Observable<any> {

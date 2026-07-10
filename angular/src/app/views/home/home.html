@@ -42,8 +42,39 @@
             </button>
 
             <!-- Search for users -->
-            <input type="text" placeholder="Search for other pup profiles..."
-                class="w-7/8 bg-gray-100 mb-3 mx-8 px-4 py-1 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-background" />
+            <div class="relative w-full">
+                <input 
+                    matInput
+                    type="text"
+                    placeholder="Search for other users..."
+                    class="w-[calc(100%-4rem)] bg-gray-100 mb-3 mx-8 px-4 py-1 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-background"
+                    [(ngModel)]="searchText"
+                    (ngModelChange)="onSearch($event)"
+                    [matAutocomplete]="auto">
+
+                <button
+                    *ngIf="searchText"
+                    type="button"
+                    (click)="clearUserSearch()"
+                    class="absolute right-10 top-1 z-10">
+                    ✕
+                </button>
+            </div>
+
+            <mat-autocomplete
+                #auto="matAutocomplete">
+
+                <mat-option
+                    *ngFor="let user of users"
+                    [value]="user.username"
+                    (onSelectionChange)="onUserSelected(user)">
+
+                    {{ user.username }}
+
+                </mat-option>
+
+            </mat-autocomplete>
+
         </div>
     </div>
 

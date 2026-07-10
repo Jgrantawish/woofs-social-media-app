@@ -36,6 +36,7 @@ def to_post_response(post: Post, logged_in_user_id: int, like_count, has_liked, 
 # GET endpoint for fetching all social metia posts (and their associated metadata)
 @router.get("/", response_model=list[PostResponse])
 def get_posts(
+    searched_user_id: Optional[int] = None,
     user_session: SessionData = Depends(get_user_session),
     db_session: Session = Depends(get_db_session)
 ):
@@ -79,6 +80,10 @@ def get_posts(
         # Sort posts so that the newest posts appear first
         .order_by(Post.created_date.desc())
     )
+
+    # If they have searched for a user, filter to only posts created by that user  
+    if searched_user_id is not None:
+        statement = statement.where(Post.user_id == searched_user_id)
 
     # Execute query (returns rows in the form: Post, like_count, has_liked)
     results = db_session.exec(statement).all()
