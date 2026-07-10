@@ -145,14 +145,76 @@ async def create_new_post(
     return {"message": "Post created"}
 
 
+
+# PUT endpoint for editing a social media post by the logged in user
+@router.put("/edit")
+async def edit_post(
+    post_id: int = Form(),
+    remove_original_image: bool = Form(False),
+    image: Optional[UploadFile] = File(None),
+    content: Optional[str] = Form(None),
+    user_session: SessionData = Depends(get_user_session),
+    db_session: Session = Depends(get_db_session)
+):
+    MAX_CONTENT_LENGTH = 280
+    content = content.strip() if content else None
+
+    post = db_session.get(Post, post_id)
+    original_image_url = post.picture_url
+
+    # Check post exists
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    # Check ownership
+    if post.user_id != user_session.user_id:
+        raise HTTPException(status_code=403, detail="Not allowed")
+
+
+    # Check that the edited post is not completely empty
+    if not image and not content and (remove_original_image or not original_image_url):
+        raise HTTPException(
+            status_code=400,
+            detail="Post must contain an image or text"
+        )
+    
+    # Check that any content is still no longer than max character length
+    if content and len(content) > MAX_CONTENT_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Content must be less than {MAX_CONTENT_LENGTH} characters"
+        )
+    
+    post.content = content
+
+    # If a the original post image was removed or replaced, remove it from the uploads folder and the post db record
+    if original_image_url and remove_original_image:
+        delete_post_image(original_image_url)
+        post.picture_url = None
+
+
+    # If a different image file was uploaded as part of the edit, save it to the uploads folder and the post db record
+    updated_image_url = None
+    if image:
+        updated_image_url = await upload_post_image(image)
+        post.picture_url = updated_image_url
+
+    post.last_updated = datetime.now()
+
+    db_session.commit()
+    db_session.refresh(post)
+
+    return {"message": "Post updated"}
+
+
 # DELETE endpoint deleting a specified post
 @router.delete("/delete")
 def delete_post(
     post_id: int = Body(...),
     user_session: SessionData = Depends(get_user_session),
-    db: Session = Depends(get_db_session),
+    db_session: Session = Depends(get_db_session),
 ):
-    post = db.get(Post, post_id)
+    post = db_session.get(Post, post_id)
     image_url = post.picture_url
 
     # Check post exists
@@ -163,8 +225,8 @@ def delete_post(
     if post.user_id != user_session.user_id:
         raise HTTPException(status_code=403, detail="Not allowed")
 
-    db.delete(post)
-    db.commit()
+    db_session.delete(post)
+    db_session.commit()
 
     # If the deleted post contained an image, remove it from our uploads folder
     if image_url:

@@ -29,7 +29,8 @@
         @if (post.is_owner){
             <div class="flex gap-2">
                 <button 
-                    class="px-2 py-1 bg-tertiary rounded-lg text-white hover:shadow-md">
+                    class="px-2 py-1 bg-tertiary rounded-lg text-white hover:shadow-md"
+                    (click)="editPost()">
                     Edit
                 </button>
 

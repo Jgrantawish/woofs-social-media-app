@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { PostService, PostData, CommentData } from '../../services/post.service';
 import { environment } from '../../../environments/environment';
 import { ChangeDetectorRef, EventEmitter } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { EditPost } from '../dialogs/edit-post/edit-post';
 import moment from 'moment';
 
 @Component({
@@ -16,7 +18,8 @@ export class Post {
 
   constructor(
     private postService: PostService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {}
 
   @Input({ required: true }) post!: PostData;
@@ -47,6 +50,27 @@ export class Post {
         }
       });
     }
+  }
+
+  public editPost() {
+
+    const editPostDialogRef = this.dialog.open(EditPost, {
+      width: '700px',
+      data: {
+        id: this.post.id,
+        image: this.post.picture_url,
+        content: this.post.content,
+      }
+    });
+
+    editPostDialogRef.afterClosed().subscribe((result) => {
+    // Only re fetch posts if a post was actually edited
+      if (result) {
+          // Emit event to tell the home page that a post has been updated and so the feed needs to be refreshed 
+          this.change.emit(this.post.id);
+      }
+    });
+    
   }
 
   public addLike(){

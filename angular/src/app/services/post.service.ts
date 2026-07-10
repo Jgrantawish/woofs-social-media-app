@@ -57,6 +57,27 @@ export class PostService {
         return this.http.post(this.apiUrl + '/posts/new', formData);
     }
 
+    public updatePost(postId: number, removeOriginalImage: boolean, image?: File | null, content?: string): Observable<any> {
+
+        // Use FormData to send image file 
+        const formData = new FormData();
+
+        // convert to strings so that it can be sent as part of the FormData
+        formData.append("post_id", postId.toString());
+        formData.append("remove_original_image", removeOriginalImage.toString());
+
+        if (image) {
+            formData.append('image', image);
+        }
+
+        // If no content, then don't add it to the formData
+        if (content?.trim()) {
+            formData.append('content', content);
+        }
+
+        return this.http.put(this.apiUrl + '/posts/edit', formData);
+    }
+
     public deletePost(postId: number){
         return this.http.delete(this.apiUrl + '/posts/delete', {body:postId});
     }
