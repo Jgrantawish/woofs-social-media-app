@@ -23,7 +23,7 @@ export class Post {
   ) {}
 
   @Input({ required: true }) post!: PostData;
-  @Output() change = new EventEmitter<number>();
+  @Output() postChanged = new EventEmitter<number>();
 
   // UI state (local to each post instance)
   public showComments: boolean = false;
@@ -43,7 +43,7 @@ export class Post {
       this.postService.deletePost(this.post.id).subscribe({
         next: () => {
           // Emit event to tell the home page that a post has been deleted and so the feed needs to be refreshed 
-          this.change.emit(this.post.id);
+          this.postChanged.emit(this.post.id);
         },
         error: (err) => {
           console.error(err);
@@ -67,7 +67,7 @@ export class Post {
     // Only re fetch posts if a post was actually edited
       if (result) {
           // Emit event to tell the home page that a post has been updated and so the feed needs to be refreshed 
-          this.change.emit(this.post.id);
+          this.postChanged.emit(this.post.id);
       }
     });
     
@@ -102,7 +102,7 @@ export class Post {
   }
 
   public postComment() {
-    if (this.newCommentContent?.trim()){
+    if (this.newCommentContent.trim()){
       this.postService.addComment(this.post.id, this.newCommentContent).subscribe({
         next: () => {
           // Clear comment input box ready for another comment
