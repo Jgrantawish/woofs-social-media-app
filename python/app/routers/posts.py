@@ -55,6 +55,7 @@ def get_posts(
                 Like.post_id == Post.id,
                 Like.user_id == user_session.user_id
             )
+            .correlate(Post)
         ).scalar_subquery()
     )
 
@@ -288,7 +289,14 @@ async def remove_like(
         )
     )
 
-    db_session.exec(statement)
+    result = db_session.exec(statement)
     db_session.commit()
+
+    # If no like was actually deleted from the table, throw an error so that front end does not change the GUI 
+    if result.rowcount == 0:
+        raise HTTPException(
+            status_code=404, 
+            detail="You cannot unlike a post more than once"
+        )
 
     return {"message": "Like removed from post"}
