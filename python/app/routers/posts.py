@@ -166,7 +166,6 @@ async def edit_post(
     content = content.strip() if content else None
 
     post = db_session.get(Post, post_id)
-    original_image_url = post.picture_url
 
     # Check post exists
     if not post:
@@ -175,7 +174,8 @@ async def edit_post(
     # Check ownership
     if post.user_id != user_session.user_id:
         raise HTTPException(status_code=403, detail="Not allowed")
-
+    
+    original_image_url = post.picture_url
 
     # Check that the edited post is not completely empty
     if not image and not content and (remove_original_image or not original_image_url):
@@ -221,7 +221,6 @@ def delete_post(
     db_session: Session = Depends(get_db_session),
 ):
     post = db_session.get(Post, post_id)
-    image_url = post.picture_url
 
     # Check post exists
     if not post:
@@ -230,6 +229,8 @@ def delete_post(
     # Check ownership
     if post.user_id != user_session.user_id:
         raise HTTPException(status_code=403, detail="Not allowed")
+    
+    image_url = post.picture_url
 
     db_session.delete(post)
     db_session.commit()
